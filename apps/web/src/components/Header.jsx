@@ -26,7 +26,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-[100px]">
           {/* Logo */}
           <Link to="/" className="flex items-center py-3">
-            <img src="https://horizons-cdn.hostinger.com/63a3c31a-cdf5-47c2-8678-f4b23ba82f8e/176a168fe010d7d3fc2d13e9bf054d5e.png" alt="Great Wildlife Photos" className="h-24 w-auto"
+            <img src="https://images.greatwildlifephotos.com/branding/gwp-logo.png" alt="Great Wildlife Photos" className="h-24 w-auto"
           />
           </Link>
 

@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <Link to="/" style={{ display: 'inline-block', marginBottom: '12px' }}>
-              <img src="https://horizons-cdn.hostinger.com/63a3c31a-cdf5-47c2-8678-f4b23ba82f8e/176a168fe010d7d3fc2d13e9bf054d5e.png" alt="Great Wildlife Photos" style={{ height: '90px', width: 'auto' }} />
+              <img src="https://images.greatwildlifephotos.com/branding/gwp-logo.png" alt="Great Wildlife Photos" style={{ height: '90px', width: 'auto' }} />
             </Link>
             <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', lineHeight: '1.7' }}>
               Award-winning North American wildlife photography by Lynn Starnes. All photographs are © Lynn Starnes, all rights reserved.
