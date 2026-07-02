@@ -56,7 +56,7 @@ const OrderConfirmationPage = () => {
           <div className="text-center mb-8">
             <div className="inline-block w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mb-4" />
             <h2 className="text-xl font-semibold text-muted-foreground">Processing your order...</h2>
-            <p className="text-sm text-muted-foreground mt-2">Please wait while we confirm your payment with our printing partner.</p>
+            <p className="text-sm text-muted-foreground mt-2">Please wait while we confirm your payment.</p>
           </div>
           <Skeleton className="h-12 w-3/4 mb-8" />
           <Skeleton className="h-64 w-full" />
@@ -214,12 +214,12 @@ const OrderConfirmationPage = () => {
               <Link to="/gallery">Continue shopping</Link>
             </Button>
             <Button
+              asChild
               variant="outline"
               size="lg"
-              onClick={() => window.print()}
               className="transition-all duration-200"
             >
-              Print Receipt
+              <Link to={`/order-receipt?payment_intent=${paymentIntentId}`}>Print Receipt</Link>
             </Button>
           </div>
         </div>

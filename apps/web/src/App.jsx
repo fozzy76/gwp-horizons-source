@@ -8,6 +8,7 @@ import GalleryPage from '@/pages/GalleryPage.jsx';
 import PhotoDetailPage from '@/pages/PhotoDetailPage.jsx';
 import CartPage from '@/pages/CartPage.jsx';
 import CheckoutPage from '@/pages/CheckoutPage.jsx';
+import OrderReceiptPage from '@/pages/OrderReceiptPage.jsx';
 import OrderConfirmationPage from '@/pages/OrderConfirmationPage.jsx';
 import ContactPage from '@/pages/ContactPage.jsx';
 import AboutPage from '@/pages/AboutPage.jsx';
@@ -43,6 +44,7 @@ function App() {
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/confirmation/:orderId" element={<OrderConfirmationPage />} />
                     <Route path="/order-success" element={<OrderConfirmationPage />} />
+                    <Route path="/order-receipt" element={<OrderReceiptPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/faq" element={<FAQPage />} />
