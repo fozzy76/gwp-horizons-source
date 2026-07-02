@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Package, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button.jsx';
 import { Skeleton } from '@/components/ui/skeleton.jsx';
-import pb from '@/lib/pocketbaseClient.js';
 
 const OrderConfirmationPage = () => {
-  const { orderId } = useParams();
+  const [searchParams] = useSearchParams();
+  const paymentIntentId = searchParams.get('payment_intent');
   const [order, setOrder] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrder = async () => {
+      if (!paymentIntentId) {
+        setLoading(false);
+        return;
+      }
       try {
-        const orderData = await pb.collection('orders').getOne(orderId, {
-          expand: 'order_items_via_order_id,order_items_via_order_id.photo_id',
-          $autoCancel: false
-        });
-        setOrder(orderData);
-        setOrderItems(orderData.expand?.order_items_via_order_id || []);
+        const response = await fetch('https://api.greatwildlifephotos.com/api/checkout/orders/' + paymentIntentId);
+        if (!response.ok) {
+          console.error('Order fetch failed:', response.status);
+          setLoading(false);
+          return;
+        }
+        const data = await response.json();
+        setOrder(data);
+        setOrderItems(data.items || []);
       } catch (error) {
         console.error('Failed to fetch order:', error);
       } finally {
@@ -29,7 +36,7 @@ const OrderConfirmationPage = () => {
     };
 
     fetchOrder();
-  }, [orderId]);
+  }, [paymentIntentId]);
 
   if (loading) {
     return (
@@ -79,7 +86,7 @@ const OrderConfirmationPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div>
                 <h2 className="text-sm font-semibold text-muted-foreground mb-2">Order number</h2>
-                <p className="text-lg font-semibold">{order.external_id || order.id}</p>
+                <p className="text-lg font-semibold">{order.orderNumber || order.id}</p>
               </div>
               <div>
                 <h2 className="text-sm font-semibold text-muted-foreground mb-2">Order status</h2>
@@ -123,20 +130,20 @@ const OrderConfirmationPage = () => {
               <div className="space-y-4">
                 {orderItems.map(item => (
                   <div key={item.id} className="flex gap-4 pb-4 border-b border-border last:border-0">
-                    {item.expand?.photo_id && (
+                    {item.photo_url && (
                       <img
-                        src={item.expand.photo_id.photo_url || 'https://images.unsplash.com/photo-1564760055775-d63b17a55c44'}
-                        alt={item.expand.photo_id.title}
+                        src={item.photo_url || 'https://images.unsplash.com/photo-1564760055775-d63b17a55c44'}
+                        alt={item.photo_title}
                         className="w-20 h-20 object-cover rounded"
                       />
                     )}
                     <div className="flex-1">
-                      <p className="font-medium">{item.expand?.photo_id?.title || 'Photo'}</p>
+                      <p className="font-medium">{item.photo_title || 'Photo'}</p>
                       <p className="text-sm text-muted-foreground">
                         {item.material} • {item.size} • Qty: {item.quantity}
                       </p>
                       <p className="text-sm font-semibold text-primary mt-1">
-                        ${item.price.toFixed(2)}
+                        ${Number(item.price).toFixed(2)}
                       </p>
                     </div>
                   </div>
