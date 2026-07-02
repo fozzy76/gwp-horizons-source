@@ -19,7 +19,7 @@ const OrderConfirmationPage = () => {
         return;
       }
       try {
-        const response = await fetch('https://api.greatwildlifephotos.com/api/checkout/orders/' + paymentIntentId);
+        const response = await fetch('https://api.greatwildlifephotos.com/checkout/orders/' + paymentIntentId);
         if (!response.ok) {
           if (response.status === 404 && retryCount < 5) {
             // Order may not be saved yet — Stripe webhook still processing
