@@ -143,7 +143,7 @@ const OrderConfirmationPage = () => {
                         {item.material} • {item.size} • Qty: {item.quantity}
                       </p>
                       <p className="text-sm font-semibold text-primary mt-1">
-                        ${Number(item.price).toFixed(2)}
+                        ${Number(item.unit_price).toFixed(2)}
                       </p>
                     </div>
                   </div>
