@@ -23,6 +23,7 @@ const OrderConfirmationPage = () => {
         if (!response.ok) {
           if (response.status === 404 && retryCount < 5) {
             // Order may not be saved yet — Stripe webhook still processing
+            // Don't setLoading(false) — keep showing skeleton during retries
             setTimeout(() => fetchOrder(retryCount + 1), 1500);
             return;
           }
@@ -33,9 +34,9 @@ const OrderConfirmationPage = () => {
         const data = await response.json();
         setOrder(data);
         setOrderItems(data.items || []);
+        setLoading(false);
       } catch (error) {
         console.error('Failed to fetch order:', error);
-      } finally {
         setLoading(false);
       }
     };
