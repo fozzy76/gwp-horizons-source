@@ -13,7 +13,7 @@ const OrderConfirmationPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchOrder = async () => {
+    const fetchOrder = async (retryCount = 0) => {
       if (!paymentIntentId) {
         setLoading(false);
         return;
@@ -21,6 +21,11 @@ const OrderConfirmationPage = () => {
       try {
         const response = await fetch('https://api.greatwildlifephotos.com/api/checkout/orders/' + paymentIntentId);
         if (!response.ok) {
+          if (response.status === 404 && retryCount < 5) {
+            // Order may not be saved yet — Stripe webhook still processing
+            setTimeout(() => fetchOrder(retryCount + 1), 1500);
+            return;
+          }
           console.error('Order fetch failed:', response.status);
           setLoading(false);
           return;
