@@ -28,30 +28,42 @@ const PhotoDetailPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [photoRes, variantRes, configRes] = await Promise.all([
+        // Fetch photo and config in parallel first
+        const [photoRes, configRes] = await Promise.all([
           fetch(API_BASE + '/products/slug/' + slug),
-          fetch(API_BASE + '/catalog/variants'),
           fetch(API_BASE + '/catalog/config')
         ]);
         const photoData = await photoRes.json();
-        const variantData = await variantRes.json();
         const configData = await configRes.json();
 
         if (configData.success) {
           setMarkupPct(configData.markup_percentage);
         }
 
-        if (photoData.success && photoData.product) {
-          setPhoto(photoData.product);
-        } else {
+        if (!photoData.success || !photoData.product) {
           toast.error('Photo not found');
           navigate('/gallery');
           return;
         }
 
-        if (variantData.success) {
-          setVariants(variantData.variants);
-          setSelectedVariantId(variantData.variants.canvas.sizes[0].id);
+        const photo = photoData.product;
+        setPhoto(photo);
+
+        // Fetch compatible variants for this specific photo
+        const variantRes = await fetch(API_BASE + '/catalog/variants/compatible/' + photo.id);
+        const variantData = await variantRes.json();
+
+        if (variantData.success && variantData.variants) {
+          const materials = Object.keys(variantData.variants);
+          if (materials.length > 0) {
+            setVariants(variantData.variants);
+            const firstMaterial = materials[0];
+            setSelectedMaterial(firstMaterial);
+            setSelectedVariantId(variantData.variants[firstMaterial].sizes[0].id);
+          } else {
+            console.warn('No compatible variants found for photo', photo.id);
+            setVariants({});
+          }
         }
       } catch (error) {
         console.error('Failed to fetch data:', error);
@@ -66,7 +78,9 @@ const PhotoDetailPage = () => {
 
   const handleMaterialChange = (material) => {
     setSelectedMaterial(material);
-    setSelectedVariantId(variants[material].sizes[0].id);
+    if (variants[material] && variants[material].sizes && variants[material].sizes.length > 0) {
+      setSelectedVariantId(variants[material].sizes[0].id);
+    }
   };
 
   const getSelectedVariant = () => {
