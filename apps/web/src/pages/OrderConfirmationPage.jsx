@@ -88,6 +88,21 @@ const OrderConfirmationPage = () => {
         <meta name="description" content="Your order has been confirmed. Thank you for your purchase." />
       </Helmet>
 
+      <style>{`
+        @media print {
+          header, footer, nav, button, [class*="btn"], a[href="/gallery"], .lucide-shopping-cart { display: none !important; }
+          .fixed { position: static !important; }
+          body, .min-h-screen { background: white !important; }
+          .shadow-lg, .rounded-xl { box-shadow: none !important; }
+          .bg-card, .bg-muted { background: white !important; border: 1px solid #ccc !important; }
+          .text-primary { color: black !important; }
+          .text-muted-foreground { color: #333 !important; }
+          .max-w-4xl { max-width: 100% !important; }
+          .py-12 { padding-top: 0 !important; padding-bottom: 0 !important; }
+          .mb-12, .mb-8 { margin-bottom: 1rem !important; }
+        }
+      `}</style>
+
       <div className="min-h-screen bg-background py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -190,13 +205,21 @@ const OrderConfirmationPage = () => {
             </ul>
           </div>
 
-          <div className="text-center">
+          <div className="text-center flex gap-4 justify-center">
             <Button
               asChild
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
             >
               <Link to="/gallery">Continue shopping</Link>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => window.print()}
+              className="transition-all duration-200"
+            >
+              Print Receipt
             </Button>
           </div>
         </div>
