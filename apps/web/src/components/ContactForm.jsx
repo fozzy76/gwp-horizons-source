@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button.jsx';
 import { Input } from '@/components/ui/input.jsx';
 import { Textarea } from '@/components/ui/textarea.jsx';
 import { Label } from '@/components/ui/label.jsx';
+import TurnstileWidget from '@/components/TurnstileWidget.jsx';
 import { toast } from 'sonner';
 
 const ContactForm = () => {
@@ -12,6 +13,9 @@ const ContactForm = () => {
     message: ''
   });
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef(null);
+  const handleTurnstileVerify = useCallback((token) => setTurnstileToken(token), []);
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -25,10 +29,15 @@ const ContactForm = () => {
     setLoading(true);
 
     try {
+      if (turnstileRef.current?.enabled && !turnstileToken) {
+        toast.error('Complete the security check first.');
+        setLoading(false);
+        return;
+      }
       const response = await fetch('https://api.greatwildlifephotos.com/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, turnstileToken })
       });
 
       const data = await response.json();
@@ -39,8 +48,10 @@ const ContactForm = () => {
 
       toast.success("Message sent! Lynn will get back to you within 1–2 business days.");
       setFormData({ name: '', email: '', message: '' });
+      turnstileRef.current?.reset();
     } catch (error) {
       toast.error('Failed to send message. Please try again or email lynn@greatwildlifephotos.com directly.');
+      turnstileRef.current?.reset();
     } finally {
       setLoading(false);
     }
@@ -89,6 +100,8 @@ const ContactForm = () => {
           disabled={loading}
         />
       </div>
+
+      <TurnstileWidget ref={turnstileRef} onVerify={handleTurnstileVerify} />
 
       <Button
         type="submit"

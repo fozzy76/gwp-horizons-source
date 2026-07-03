@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { useCart } from '@/contexts/CartContext.jsx';
 import { Lock, ArrowLeft, MapPin } from 'lucide-react';
 import SEO from '@/components/SEO.jsx';
+import TurnstileWidget from '@/components/TurnstileWidget.jsx';
 
 const stripePromise = fetch('https://api.greatwildlifephotos.com/catalog/config')
   .then(res => res.json())
@@ -144,6 +145,9 @@ const PaymentForm = ({ address, cartItems, amountTotalCents, displayTotal, proce
   const { clearCart } = useCart();
   const [errorMessage, setErrorMessage] = useState('');
   const [elementsReady, setElementsReady] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef(null);
+  const handleTurnstileVerify = useCallback((token) => setTurnstileToken(token), []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -155,6 +159,10 @@ const PaymentForm = ({ address, cartItems, amountTotalCents, displayTotal, proce
       // Required by Stripe deferred flow: submit elements before async work
       const { error: submitError } = await elements.submit();
       if (submitError) throw new Error(submitError.message);
+
+      if (turnstileRef.current?.enabled && !turnstileToken) {
+        throw new Error('Complete the security check first.');
+      }
 
       // Create PaymentIntent with final tax-inclusive total
       const intentResponse = await fetch(API_BASE + '/checkout/payment-intent', {
@@ -168,7 +176,8 @@ const PaymentForm = ({ address, cartItems, amountTotalCents, displayTotal, proce
             quantity: item.quantity,
             image_url: item.photo_url || item.r2_url
           })),
-          amountTotalCents: amountTotalCents || null
+          amountTotalCents: amountTotalCents || null,
+          turnstileToken
         })
       });
 
@@ -215,6 +224,7 @@ const PaymentForm = ({ address, cartItems, amountTotalCents, displayTotal, proce
       navigate('/order-success?payment_intent=' + intentData.paymentIntentId);
     } catch (err) {
       setErrorMessage(err.message);
+      turnstileRef.current?.reset();
       setProcessing(false);
     }
   };
@@ -232,6 +242,7 @@ const PaymentForm = ({ address, cartItems, amountTotalCents, displayTotal, proce
           {errorMessage}
         </div>
       )}
+      <TurnstileWidget ref={turnstileRef} onVerify={handleTurnstileVerify} className="mt-4" />
       {elementsReady && (
         <Button
           type="submit"

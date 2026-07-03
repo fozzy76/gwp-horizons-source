@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button.jsx';
 import { Input } from '@/components/ui/input.jsx';
+import TurnstileWidget from '@/components/TurnstileWidget.jsx';
 import { toast } from 'sonner';
 
 const NewsletterSignup = ({ className = '' }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef(null);
+  const handleTurnstileVerify = useCallback((token) => setTurnstileToken(token), []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,11 +17,16 @@ const NewsletterSignup = ({ className = '' }) => {
 
     setLoading(true);
     try {
+      if (turnstileRef.current?.enabled && !turnstileToken) {
+        toast.error('Complete the security check first.');
+        setLoading(false);
+        return;
+      }
       const response = await fetch('https://api.greatwildlifephotos.com/api/subscribe'
 , {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, turnstileToken })
       });
 
       const data = await response.json();
@@ -25,6 +34,7 @@ const NewsletterSignup = ({ className = '' }) => {
       if (response.status === 409) {
         toast.info("You're already subscribed, keep an eye out for new releases!");
         setEmail('');
+        turnstileRef.current?.reset();
         return;
       }
 
@@ -34,15 +44,17 @@ const NewsletterSignup = ({ className = '' }) => {
 
       toast.success("You're subscribed! Welcome to Great Wildlife Photos.");
       setEmail('');
+      turnstileRef.current?.reset();
     } catch (error) {
       toast.error('Subscription failed. Please try again.');
+      turnstileRef.current?.reset();
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`flex gap-2 ${className}`}>
+    <form onSubmit={handleSubmit} className={`flex flex-col gap-2 sm:flex-row sm:items-start ${className}`}>
       <Input
         type="email"
         placeholder="Enter your email"
@@ -59,6 +71,7 @@ const NewsletterSignup = ({ className = '' }) => {
       >
         {loading ? 'Subscribing...' : 'Subscribe'}
       </Button>
+      <TurnstileWidget ref={turnstileRef} onVerify={handleTurnstileVerify} className="sm:basis-full" />
     </form>
   );
 };
