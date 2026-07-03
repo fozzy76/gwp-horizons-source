@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Minus, Plus, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Minus, Plus, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
 import { Skeleton } from '@/components/ui/skeleton.jsx';
@@ -24,6 +24,8 @@ const PhotoDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
+  const [allSlugs, setAllSlugs] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(-1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +50,20 @@ const PhotoDetailPage = () => {
 
         const photo = photoData.product;
         setPhoto(photo);
+
+        // Fetch all product slugs for prev/next navigation
+        try {
+          const galleryRes = await fetch(API_BASE + '/products?limit=50');
+          const galleryData = await galleryRes.json();
+          if (galleryData.success && galleryData.products) {
+            const slugs = galleryData.products.map(p => p.slug);
+            setAllSlugs(slugs);
+            const idx = slugs.indexOf(photo.slug);
+            setCurrentIndex(idx);
+          }
+        } catch (e) {
+          console.warn('Failed to fetch product list for navigation:', e.message);
+        }
 
         // Fetch compatible variants for this specific photo
         const variantRes = await fetch(API_BASE + '/catalog/variants/compatible/' + photo.id);
@@ -75,6 +91,14 @@ const PhotoDetailPage = () => {
     };
     fetchData();
   }, [slug, navigate]);
+
+  const navigateToPhoto = (direction) => {
+    if (allSlugs.length === 0 || currentIndex === -1) return;
+    let newIndex = currentIndex + direction;
+    if (newIndex < 0) newIndex = allSlugs.length - 1; // wrap to last
+    if (newIndex >= allSlugs.length) newIndex = 0; // wrap to first
+    navigate('/photo/' + allSlugs[newIndex]);
+  };
 
   const handleMaterialChange = (material) => {
     setSelectedMaterial(material);
@@ -244,10 +268,32 @@ const PhotoDetailPage = () => {
 
       <div className="min-h-screen bg-background py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Button variant="ghost" onClick={() => navigate('/gallery')} className="my-4 mb-8">
-            <ArrowLeft className="mr-2 w-4 h-4" />
-            Back to gallery
-          </Button>
+          <div className="flex items-center justify-between my-4 mb-8">
+            <Button variant="ghost" onClick={() => navigate('/gallery')}>
+              <ArrowLeft className="mr-2 w-4 h-4" />
+              Back to gallery
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => navigateToPhoto(-1)}
+                disabled={allSlugs.length === 0}
+                title="Previous photo"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => navigateToPhoto(1)}
+                disabled={allSlugs.length === 0}
+                title="Next photo"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
             <div className="lg:col-span-3">
