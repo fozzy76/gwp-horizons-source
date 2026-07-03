@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Minus, Plus, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button.jsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
@@ -170,6 +170,7 @@ const PhotoDetailPage = () => {
 
   const materials = Object.keys(variants);
   const selectedVariant = getSelectedVariant();
+  const categoryPath = '/gallery?category=' + encodeURIComponent(photo.category || '');
 
   // No compatible print sizes for this photo's resolution/aspect ratio
   if (materials.length === 0) {
@@ -201,7 +202,9 @@ const PhotoDetailPage = () => {
               </div>
               <div className="lg:col-span-2 space-y-6">
                 <div>
-                  <p className="text-sm font-medium text-primary mb-2">{photo.category}</p>
+                  <Link to={categoryPath} className="inline-flex text-sm font-medium text-primary mb-2 hover:text-primary/80 transition-colors">
+                    {photo.category}
+                  </Link>
                   <h1 className="text-4xl font-bold mb-4">{photo.title}</h1>
                 </div>
                 {photo.description && (
@@ -321,7 +324,9 @@ const PhotoDetailPage = () => {
 
             <div className="lg:col-span-2 space-y-6">
               <div>
-                <p className="text-sm font-medium text-primary mb-2">{photo.category}</p>
+                <Link to={categoryPath} className="inline-flex text-sm font-medium text-primary mb-2 hover:text-primary/80 transition-colors">
+                  {photo.category}
+                </Link>
                 <h1 className="text-4xl font-bold mb-4">{photo.title}</h1>
                 {selectedVariant && (
                   <div className="space-y-1">
@@ -351,7 +356,7 @@ const PhotoDetailPage = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <MaterialMockup material={selectedMaterial} imageUrl={photo?.r2_url || photo?.photo_url} />
+                  <MaterialMockup material={selectedMaterial} imageUrl={photo?.r2_url || photo?.photo_url} variant={selectedVariant} />
                 </div>
 
                 <div>

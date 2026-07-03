@@ -5,27 +5,44 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Camera, Palette, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button.jsx';
 import { Skeleton } from '@/components/ui/skeleton.jsx';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel.jsx';
 
 const API_BASE = 'https://api.greatwildlifephotos.com';
 
 const HomePage = () => {
   const [featuredPhotos, setFeaturedPhotos] = useState([]);
+  const [publishedPhotos, setPublishedPhotos] = useState([]);
+  const [carouselApi, setCarouselApi] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchFeaturedPhotos = async () => {
+    const fetchHomePhotos = async () => {
       try {
-        const res = await fetch(API_BASE + '/products/featured?t=' + Date.now(), { cache: 'no-store' });
-        const data = await res.json();
-        if (data.success) setFeaturedPhotos((data.products || []).slice(0, 4));
+        const ts = Date.now();
+        const [featuredRes, publishedRes] = await Promise.all([
+          fetch(API_BASE + '/products/featured?t=' + ts, { cache: 'no-store' }),
+          fetch(API_BASE + '/products?limit=100&offset=0&t=' + ts, { cache: 'no-store' })
+        ]);
+        const featuredData = await featuredRes.json();
+        const publishedData = await publishedRes.json();
+        if (featuredData.success) setFeaturedPhotos((featuredData.products || []).slice(0, 4));
+        if (publishedData.success) setPublishedPhotos(publishedData.products || []);
       } catch (error) {
-        console.error('Failed to fetch featured photos:', error);
+        console.error('Failed to fetch home photos:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchFeaturedPhotos();
+    fetchHomePhotos();
   }, []);
+
+  useEffect(() => {
+    if (!carouselApi || publishedPhotos.length < 5) return undefined;
+    const timer = setInterval(() => {
+      carouselApi.scrollNext();
+    }, 4200);
+    return () => clearInterval(timer);
+  }, [carouselApi, publishedPhotos.length]);
 
   return (
     <>
@@ -125,6 +142,54 @@ const HomePage = () => {
                   </Link>
                 </motion.div>
               ))}
+            </div>
+          )}
+
+          {!loading && publishedPhotos.length > 0 && (
+            <div className="mt-14">
+              <div className="flex items-end justify-between gap-4 mb-5">
+                <div>
+                  <h3 className="text-2xl font-semibold text-white">More from the gallery</h3>
+                  <p className="text-sm text-gray-400 mt-1">Browse published wildlife prints one image at a time.</p>
+                </div>
+              </div>
+              <Carousel
+                setApi={setCarouselApi}
+                opts={{ align: 'start', loop: publishedPhotos.length > 4, slidesToScroll: 1 }}
+                className="px-10 md:px-12"
+              >
+                <CarouselContent className="-ml-3">
+                  {publishedPhotos.map(photo => (
+                    <CarouselItem key={photo.id} className="pl-3 basis-full sm:basis-1/2 lg:basis-1/4">
+                      <Link
+                        to={`/photo/${photo.slug}`}
+                        className="group block overflow-hidden bg-zinc-900 border border-white/10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                        style={{ borderRadius: '12px' }}
+                      >
+                        <div className="relative h-56 overflow-hidden">
+                          <img
+                            src={photo.r2_url || photo.photo_url}
+                            alt={`${photo.title} - Fine art wildlife photography print by Lynn Starnes`}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1564760055775-d63b17a55c44'; }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-4">
+                            <h4 className="text-white text-sm font-semibold leading-snug line-clamp-2">{photo.title}</h4>
+                            <p className="text-xs text-gray-300 mt-1">{photo.category}</p>
+                          </div>
+                        </div>
+                      </Link>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                {publishedPhotos.length > 4 && (
+                  <>
+                    <CarouselPrevious className="left-0 md:left-1 bg-zinc-900/90 border-white/20 text-white hover:bg-zinc-800" />
+                    <CarouselNext className="right-0 md:right-1 bg-zinc-900/90 border-white/20 text-white hover:bg-zinc-800" />
+                  </>
+                )}
+              </Carousel>
             </div>
           )}
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext.jsx';
@@ -6,8 +6,35 @@ import { useCart } from '@/contexts/CartContext.jsx';
 const Header = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartNudge, setCartNudge] = useState(false);
+  const previousItemCount = useRef(0);
   const { getItemCount } = useCart();
   const itemCount = getItemCount();
+
+  useEffect(() => {
+    if (itemCount <= 0) {
+      setCartNudge(false);
+      previousItemCount.current = itemCount;
+      return undefined;
+    }
+
+    let timeoutId;
+    const triggerNudge = () => {
+      setCartNudge(true);
+      timeoutId = window.setTimeout(() => setCartNudge(false), 720);
+    };
+
+    if (itemCount !== previousItemCount.current) {
+      triggerNudge();
+      previousItemCount.current = itemCount;
+    }
+
+    const timer = window.setInterval(triggerNudge, 12000);
+    return () => {
+      window.clearInterval(timer);
+      window.clearTimeout(timeoutId);
+    };
+  }, [itemCount]);
 
   const navLinks = [
     { path: '/', label: 'Home' },
@@ -51,7 +78,8 @@ const Header = () => {
           <div className="flex items-center gap-4">
             <Link
               to="/cart"
-              className="relative p-2 text-muted-foreground hover:text-foreground transition-all duration-200"
+              aria-label={itemCount > 0 ? `Shopping cart with ${itemCount} item${itemCount === 1 ? '' : 's'}` : 'Shopping cart'}
+              className={`relative p-2 text-muted-foreground hover:text-foreground transition-all duration-200 ${cartNudge ? 'cart-nudge' : ''}`}
             >
               <ShoppingCart className="w-6 h-6" />
               {itemCount > 0 && (

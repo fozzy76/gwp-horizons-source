@@ -105,3 +105,24 @@
     font-family: 'Inter', sans-serif;
   }
 }
+
+@layer utilities {
+  @keyframes cart-nudge {
+    0%, 100% { transform: translateY(0) scale(1); }
+    18% { transform: translateY(-7px) scale(1.12); }
+    38% { transform: translateY(1px) scale(0.98); }
+    58% { transform: translateY(-3px) scale(1.06); }
+    78% { transform: translateY(0) scale(1); }
+  }
+
+  .cart-nudge {
+    animation: cart-nudge 720ms cubic-bezier(0.2, 0.85, 0.35, 1);
+    transform-origin: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cart-nudge {
+      animation: none;
+    }
+  }
+}
