@@ -241,6 +241,8 @@ const PhotoDetailPage = () => {
         <meta name="twitter:description" content={photo.description || `Premium ${photo.category} wildlife photography print available in multiple sizes and materials.`} />
         <meta name="twitter:image" content={photo.r2_url || photo.photo_url} />
 
+        {/* Google may warn that Product schema is missing review/aggregateRating.
+            Leave those fields out until GWP has real, visible, product-specific review data. */}
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Product",

@@ -15,9 +15,9 @@ const HomePage = () => {
   useEffect(() => {
     const fetchFeaturedPhotos = async () => {
       try {
-        const res = await fetch(API_BASE + '/products/featured');
+        const res = await fetch(API_BASE + '/products/featured?t=' + Date.now(), { cache: 'no-store' });
         const data = await res.json();
-        if (data.success) setFeaturedPhotos(data.products.slice(0, 4));
+        if (data.success) setFeaturedPhotos((data.products || []).slice(0, 4));
       } catch (error) {
         console.error('Failed to fetch featured photos:', error);
       } finally {
