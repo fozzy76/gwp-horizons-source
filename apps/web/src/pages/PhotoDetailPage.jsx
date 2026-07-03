@@ -66,7 +66,9 @@ const PhotoDetailPage = () => {
         }
 
         // Fetch compatible variants for this specific photo
-        const variantRes = await fetch(API_BASE + '/catalog/variants/compatible/' + photo.id);
+        const variantRes = await fetch(API_BASE + '/catalog/variants/compatible/' + photo.id + '?t=' + Date.now(), {
+          cache: 'no-store'
+        });
         const variantData = await variantRes.json();
 
         if (variantData.success && variantData.variants) {
