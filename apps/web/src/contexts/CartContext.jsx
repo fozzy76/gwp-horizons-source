@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { trackAddToCart } from '@/lib/analytics.js';
 
 const CartContext = createContext();
 
@@ -34,6 +35,7 @@ export const CartProvider = ({ children }) => {
   }, [cartItems, loading]);
 
   const addToCart = (item) => {
+    trackAddToCart(item);
     setCartItems(prev => {
       const existingIndex = prev.findIndex(
         i => i.photoId === item.photoId &&

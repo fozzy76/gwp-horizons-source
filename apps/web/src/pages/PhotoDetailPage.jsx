@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useCart } from '@/contexts/CartContext.jsx';
 import MaterialMockup from '@/components/MaterialMockup.jsx';
 import SEO from '@/components/SEO.jsx';
+import { trackViewItem } from '@/lib/analytics.js';
 import { baseGraph, breadcrumbSchema, productSchema, truncateText, webPageSchema } from '@/lib/seo.js';
 
 const API_BASE = 'https://api.greatwildlifephotos.com';
@@ -167,6 +168,12 @@ const PhotoDetailPage = () => {
       setAddingToCart(false);
     }
   };
+
+  useEffect(() => {
+    const variant = getSelectedVariant();
+    if (!photo || !variant) return;
+    trackViewItem(photo, variant, getFinalPrice(variant));
+  }, [photo?.id, selectedVariantId]);
 
   if (loading) {
     return (

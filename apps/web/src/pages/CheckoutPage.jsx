@@ -15,6 +15,7 @@ import { useCart } from '@/contexts/CartContext.jsx';
 import { Lock, ArrowLeft, MapPin } from 'lucide-react';
 import SEO from '@/components/SEO.jsx';
 import TurnstileWidget from '@/components/TurnstileWidget.jsx';
+import { trackAddPaymentInfo, trackAddShippingInfo, trackBeginCheckout } from '@/lib/analytics.js';
 
 const stripePromise = fetch('https://api.greatwildlifephotos.com/catalog/config')
   .then(res => res.json())
@@ -183,6 +184,7 @@ const PaymentForm = ({ address, cartItems, amountTotalCents, displayTotal, proce
 
       const intentData = await intentResponse.json();
       if (!intentData.success) throw new Error(intentData.error || 'Failed to initialize payment');
+      trackAddPaymentInfo(cartItems, amountTotalCents ? amountTotalCents / 100 : displayTotal);
 
       const { error } = await stripe.confirmPayment({
         elements,
@@ -287,6 +289,12 @@ const CheckoutPage = () => {
     if (cartItems.length === 0) navigate('/cart');
   }, []);
 
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      trackBeginCheckout(cartItems, getTotal());
+    }
+  }, []);
+
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
     setAddress(prev => ({ ...prev, [name]: value }));
@@ -320,6 +328,7 @@ const CheckoutPage = () => {
         setAmountTotalCents(data.amountTotalCents);
         setDisplayTotal(data.amountTotal.toFixed(2));
         setTaxVerified(true);
+        trackAddShippingInfo(cartItems, data.amountTotal);
       } else {
         toast.error('Could not calculate tax. Please verify your address.');
       }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import AnalyticsRouteTracker from '@/components/AnalyticsRouteTracker.jsx';
 import ScrollToTop from '@/components/ScrollToTop.jsx';
 import Header from '@/components/Header.jsx';
 import Footer from '@/components/Footer.jsx';
@@ -26,6 +27,7 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <BrowserRouter>
+          <AnalyticsRouteTracker />
           <ScrollToTop />
           <Toaster richColors position="bottom-right" />
           <Routes>

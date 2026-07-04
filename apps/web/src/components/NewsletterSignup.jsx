@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button.jsx';
 import { Input } from '@/components/ui/input.jsx';
 import TurnstileWidget from '@/components/TurnstileWidget.jsx';
+import { trackNewsletterSignup } from '@/lib/analytics.js';
 import { toast } from 'sonner';
 
 const NewsletterSignup = ({ className = '' }) => {
@@ -43,6 +44,7 @@ const NewsletterSignup = ({ className = '' }) => {
       }
 
       toast.success("You're subscribed! Welcome to Great Wildlife Photos.");
+      trackNewsletterSignup();
       setEmail('');
       turnstileRef.current?.reset();
     } catch (error) {

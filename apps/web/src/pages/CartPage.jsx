@@ -4,10 +4,17 @@ import { Trash2, Minus, Plus, ShoppingBag, Printer, Package, Camera, CreditCard 
 import { Button } from '@/components/ui/button.jsx';
 import { useCart } from '@/contexts/CartContext.jsx';
 import SEO from '@/components/SEO.jsx';
+import { trackViewCart } from '@/lib/analytics.js';
 
 const CartPage = () => {
   const navigate = useNavigate();
   const { cartItems, removeFromCart, updateQuantity, getSubtotal, getShipping, getTotal } = useCart();
+
+  React.useEffect(() => {
+    if (cartItems.length > 0) {
+      trackViewCart(cartItems, getTotal());
+    }
+  }, []);
 
   if (cartItems.length === 0) {
     return (

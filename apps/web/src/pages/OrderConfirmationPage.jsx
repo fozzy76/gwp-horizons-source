@@ -4,6 +4,7 @@ import { CheckCircle, Package, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button.jsx';
 import { Skeleton } from '@/components/ui/skeleton.jsx';
 import SEO from '@/components/SEO.jsx';
+import { trackPurchase } from '@/lib/analytics.js';
 
 const OrderConfirmationPage = () => {
   const [searchParams] = useSearchParams();
@@ -39,6 +40,7 @@ const OrderConfirmationPage = () => {
         const data = await response.json();
         setOrder(data);
         setOrderItems(data.items || []);
+        trackPurchase(data);
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch order:', error);
