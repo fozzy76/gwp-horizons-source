@@ -1,6 +1,17 @@
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 	RewriteBase /
+
+	# Google Search Console legacy samples from the previous site.
+	RewriteRule ^blog/bighorn-/?$ https://greatwildlifephotos.com/gallery [R=301,L]
+	RewriteRule ^about-the-artist/?$ https://greatwildlifephotos.com/about [R=301,L]
+	RewriteRule ^warehouse-open-edition-prints/art_print_products/ram-symmetry-lbs-2171/?$ https://greatwildlifephotos.com/gallery [R=301,L]
+
+	# Keep the canonical host and sitemap endpoint unambiguous for crawlers.
+	RewriteRule ^sitemap\.xml$ https://api.greatwildlifephotos.com/sitemap.xml [R=301,L]
+	RewriteCond %{HTTP_HOST} ^www\.greatwildlifephotos\.com$ [NC]
+	RewriteRule ^ https://greatwildlifephotos.com%{REQUEST_URI} [R=301,L]
+
 	RewriteCond %{REQUEST_FILENAME} -f [OR]
 	RewriteCond %{REQUEST_FILENAME} -d
 	RewriteRule ^ - [L]

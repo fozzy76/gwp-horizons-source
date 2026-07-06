@@ -1,14 +1,17 @@
 import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = process.cwd();
-const outputDir = join(root, '..', '..', 'dist', 'apps', 'web');
+const toolsDir = dirname(fileURLToPath(import.meta.url));
+const webRoot = join(toolsDir, '..');
+const repoRoot = join(webRoot, '..', '..');
+const outputDir = join(repoRoot, 'dist', 'apps', 'web');
 const dotfiles = ['.htaccess'];
 
 mkdirSync(outputDir, { recursive: true });
 
 for (const file of dotfiles) {
-  const source = join(root, 'public', file);
+  const source = join(webRoot, 'public', file);
   const target = join(outputDir, file);
   if (existsSync(source)) {
     copyFileSync(source, target);
