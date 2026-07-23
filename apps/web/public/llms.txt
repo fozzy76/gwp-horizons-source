@@ -1,0 +1,31 @@
+# Great Wildlife Photos
+
+> Great Wildlife Photos — award-winning North American wildlife photography prints by Lynn Starnes, available on premium canvas, metal, and acrylic.
+
+Great Wildlife Photos is an online fine-art wildlife photography print shop founded and operated by photographer Lynn Starnes. The collection features North American wildlife captured in the wild, offered as premium prints on canvas, metal, and acrylic. Lynn reads every message personally and responds within 1–2 business days. Prints ship within the US and Canada through MerchOne; international orders — particularly to Europe — are fulfilled through a UK-based print partner to avoid excessive tariffs.
+
+Contact: lynn@greatwildlifephotos.com (mailto). Custom requests, international orders, and licensing inquiries welcome via the contact page. Image CDN: images.greatwildlifephotos.com. API + sitemap: api.greatwildlifephotos.com.
+
+## Pages
+
+- [Home](https://greatwildlifephotos.com/): Premium wildlife photography prints by Lynn Starnes — canvas, metal, and acrylic, captured in the wild.
+- [Gallery](https://greatwildlifephotos.com/gallery): Browse the full wildlife photography collection; filter and search by animal, location, or season.
+- [Photo prints](https://greatwildlifephotos.com/photo/): Individual photo detail pages with print material options and pricing (pattern: /photo/<slug>).
+- [Blog](https://greatwildlifephotos.com/blog): Wildlife photography articles and field notes (individual posts at /blog/<slug>).
+- [About](https://greatwildlifephotos.com/about): About Lynn Starnes and Great Wildlife Photos.
+- [Contact](https://greatwildlifephotos.com/contact): Contact Lynn about prints, custom requests, international orders, or licensing.
+- [FAQ](https://greatwildlifephotos.com/faq): Frequently asked questions about prints, materials, shipping, and orders.
+- [Privacy](https://greatwildlifephotos.com/privacy): Privacy policy.
+- [Terms](https://greatwildlifephotos.com/terms): Terms of service.
+
+## Offerings
+
+- Fine-art wildlife photography prints on canvas, metal, and acrylic.
+- Custom requests and image sourcing — Lynn is continually adding new images and returns to the field for specific animals, locations, or seasons.
+- International orders — US/Canada via MerchOne; Europe via a UK-based print partner.
+- Licensing inquiries.
+
+## Optional
+
+- [Sitemap](https://api.greatwildlifephotos.com/sitemap.xml)
+- [Robots](https://greatwildlifephotos.com/robots.txt)
