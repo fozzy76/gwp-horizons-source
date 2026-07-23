@@ -1,15 +1,11 @@
 import React from 'react';
 import SEO from '@/components/SEO.jsx';
+import { STATIC_ROUTES } from '@/lib/routeMeta.js';
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-background py-16 px-4 sm:px-6 lg:px-8">
-      <SEO
-        title="Terms of Service | Great Wildlife Photos"
-        description="Terms of service and purchase conditions for Great Wildlife Photos fine art wildlife prints."
-        path="/terms"
-        robots="noindex,follow"
-      />
+      <SEO {...STATIC_ROUTES['/terms']} />
       
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-2">

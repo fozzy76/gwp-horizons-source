@@ -1,15 +1,11 @@
 import React from 'react';
 import SEO from '@/components/SEO.jsx';
+import { STATIC_ROUTES } from '@/lib/routeMeta.js';
 
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background py-16 px-4 sm:px-6 lg:px-8">
-      <SEO
-        title="Privacy Policy | Great Wildlife Photos"
-        description="Privacy policy for Great Wildlife Photos and Lynn Starnes wildlife photography print orders."
-        path="/privacy"
-        robots="noindex,follow"
-      />
+      <SEO {...STATIC_ROUTES['/privacy']} />
       
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-2">

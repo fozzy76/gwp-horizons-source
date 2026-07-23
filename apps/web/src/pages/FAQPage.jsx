@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import SEO from '@/components/SEO.jsx';
 import { DEFAULT_SEO_IMAGE, baseGraph, breadcrumbSchema, faqSchema, webPageSchema } from '@/lib/seo.js';
+import { STATIC_ROUTES } from '@/lib/routeMeta.js';
 
 const faqSections = [
   {
@@ -144,10 +145,7 @@ const FAQPage = () => {
   return (
     <>
       <SEO
-        title="Wildlife Print FAQ | Great Wildlife Photos"
-        description="Answers about Great Wildlife Photos print materials, ordering, shipping, returns, copyright, and Lynn Starnes' wildlife photography."
-        path="/faq"
-        image={DEFAULT_SEO_IMAGE}
+        {...STATIC_ROUTES['/faq']}
         schema={[
           ...baseGraph(),
           webPageSchema({

@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton.jsx';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel.jsx';
 import SEO from '@/components/SEO.jsx';
 import { DEFAULT_SEO_IMAGE, baseGraph, breadcrumbSchema, webPageSchema } from '@/lib/seo.js';
+import { STATIC_ROUTES } from '@/lib/routeMeta.js';
 
 const API_BASE = 'https://api.greatwildlifephotos.com';
 
@@ -48,10 +49,7 @@ const HomePage = () => {
   return (
     <>
       <SEO
-        title="Great Wildlife Photos - Premium Wildlife Photography Prints"
-        description="Discover award-winning North American wildlife photography prints by Lynn Starnes. Shop premium canvas, metal, and acrylic prints captured in the wild."
-        path="/"
-        image={DEFAULT_SEO_IMAGE}
+        {...STATIC_ROUTES['/']}
         schema={[
           ...baseGraph(),
           webPageSchema({

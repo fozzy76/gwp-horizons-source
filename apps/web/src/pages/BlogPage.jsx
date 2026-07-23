@@ -4,15 +4,13 @@ import { ArrowRight } from 'lucide-react';
 import { blogPosts } from '@/data/blogPosts.js';
 import SEO from '@/components/SEO.jsx';
 import { DEFAULT_SEO_IMAGE, baseGraph, breadcrumbSchema, webPageSchema } from '@/lib/seo.js';
+import { STATIC_ROUTES } from '@/lib/routeMeta.js';
 
 const BlogPage = () => {
   return (
     <>
       <SEO
-        title="From the Field - Wildlife Photography Blog | Great Wildlife Photos"
-        description="Stories, print buying guides, and field notes from award-winning wildlife photographer Lynn Starnes."
-        path="/blog"
-        image={DEFAULT_SEO_IMAGE}
+        {...STATIC_ROUTES['/blog']}
         schema={[
           ...baseGraph(),
           webPageSchema({

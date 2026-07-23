@@ -4,15 +4,13 @@ import ContactForm from '@/components/ContactForm.jsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
 import SEO from '@/components/SEO.jsx';
 import { DEFAULT_SEO_IMAGE, baseGraph, breadcrumbSchema, webPageSchema } from '@/lib/seo.js';
+import { STATIC_ROUTES } from '@/lib/routeMeta.js';
 
 const ContactPage = () => {
   return (
     <>
       <SEO
-        title="Contact Lynn Starnes | Great Wildlife Photos"
-        description="Contact Lynn Starnes about wildlife photography prints, custom requests, international orders, licensing, or questions about Great Wildlife Photos."
-        path="/contact"
-        image={DEFAULT_SEO_IMAGE}
+        {...STATIC_ROUTES['/contact']}
         schema={[
           ...baseGraph(),
           webPageSchema({
